@@ -23,11 +23,8 @@ export const Reviews = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    console.log(movieId);
-    console.log(data);
     const getMovies = async () => {
       const response = await getDataFromServer(movieId);
-      console.log(response);
       setData([...response.data.results]);
     };
     getMovies();

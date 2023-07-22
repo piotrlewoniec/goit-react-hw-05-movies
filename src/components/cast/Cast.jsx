@@ -8,12 +8,14 @@ import {
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
+import css from './Cast.module.css';
+import PropTypes from 'prop-types';
 
 const CastItem = ({ profile_path, name, character }) => {
   return (
     <li>
       <img
-        src={`https://image.tmdb.org/t/p/w342${profile_path}`}
+        src={`https://image.tmdb.org/t/p/original${profile_path}`}
         alt={name}
       ></img>
       <p>{name}</p>
@@ -28,22 +30,19 @@ export const Cast = () => {
   const [isData, setIsData] = useState(false);
 
   useEffect(() => {
-    console.log(movieId);
-    console.log(data);
     setIsData(false);
     const getMovies = async () => {
       const response = await getDataFromServer(movieId);
-      console.log(response);
       setData([...response.data.cast]);
+      setIsData(true);
     };
     getMovies();
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-    setIsData(true);
-    data.map((element, index) => console.log(element));
-  }, [data]);
+  // useEffect(() => {
+  //   setIsData(true);
+  //   data.map((element, index) => console.log(element));
+  // }, [data]);
 
   return (
     <ul>

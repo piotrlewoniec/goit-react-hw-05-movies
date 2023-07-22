@@ -1,7 +1,10 @@
-import { Link, Outlet } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import {
+  Link,
+  Outlet,
+  useParams,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Button } from 'components/button/Button';
 import {
@@ -19,7 +22,7 @@ const MovieDeatailsInfo = ({ data }) => {
     <div>
       <div>
         <img
-          src={`https://image.tmdb.org/t/p/w342${data.poster_path}`}
+          src={`https://image.tmdb.org/t/p/original${data.poster_path}`}
           alt={data.title}
         ></img>
       </div>
@@ -52,7 +55,6 @@ export const MovieDetails = () => {
   useEffect(() => {
     const getMovies = async () => {
       const response = await getDataFromServer(movieId);
-      console.log(response.data);
       setData(response.data);
       setIsData(true);
     };
@@ -60,9 +62,6 @@ export const MovieDetails = () => {
   }, [movieId]);
 
   const handleGoBack = () => {
-    console.log('dziala');
-    console.log(location);
-    console.log(location.state.from.pathname);
     if (
       location.state.from.pathname === '/movies' &&
       location.state.from.search === ''
@@ -73,9 +72,6 @@ export const MovieDetails = () => {
       location.state.from.state.from.pathname === '/movies' &&
       location.state.from.state.from.search !== ''
     ) {
-      console.log(location);
-      console.log(location.state.from.pathname);
-      console.log(location.state.from.state.from.pathname);
       navigate('/movies' + location.state.from.state.from.search, {
         replace: false,
       });

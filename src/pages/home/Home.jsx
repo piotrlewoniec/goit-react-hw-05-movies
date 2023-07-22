@@ -27,7 +27,6 @@ export const Home = () => {
   useEffect(() => {
     const getMovies = async () => {
       const response = await getDataFromServer();
-      console.log(response);
       setData([...response.data.results]);
     };
     getMovies();

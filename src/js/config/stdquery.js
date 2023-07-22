@@ -4,7 +4,7 @@ export const headerDefaultGet = {
 };
 
 export const headerGenres = {
-  baseURL: 'https://api.themoviedb.org/3/genre/movie/list',
+  baseURL: 'https://api.themoviedb.org/3/genre/movie/list/',
 };
 
 export const paramsGenres = {
@@ -12,7 +12,7 @@ export const paramsGenres = {
 };
 
 export const headerTrailer = {
-  baseURL: 'https://api.themoviedb.org/3/movie/',
+  baseURL: 'https://api.themoviedb.org/3/movie',
   url: '',
 };
 
@@ -36,7 +36,7 @@ export const paramsSearchMovie = {
 };
 
 export const headerSearchMovieDetails = {
-  baseURL: 'https://api.themoviedb.org/3/movie/',
+  baseURL: 'https://api.themoviedb.org/3/movie',
   url: '',
 };
 

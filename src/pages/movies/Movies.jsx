@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Notiflix from 'notiflix';
 import { Button } from 'components/button/Button';
 import {
   headerDefaultGet,
@@ -8,9 +10,6 @@ import {
 } from 'js/config/stdquery';
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
-import Notiflix from 'notiflix';
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 
 const MoviesList = ({ title, id }) => {
   const location = useLocation();
@@ -29,13 +28,11 @@ export const Movies = () => {
 
   useEffect(() => {
     const query = searchParams.get('query');
-    console.log(query);
     if (query === null) {
       return;
     } else {
       const getMovies = async () => {
         const response = await getDataFromServer(query);
-        console.log(response);
         setData([...response.data.results]);
       };
       getMovies();
@@ -46,10 +43,8 @@ export const Movies = () => {
     event.preventDefault();
     const searchPchrase = event.target.form.searchinput.value;
     const response = await getDataFromServer(searchPchrase);
-    console.log(response);
     setSearchParams({ query: searchPchrase });
     const query = searchParams.get('query');
-    console.log(query);
     setData([...response.data.results]);
   };
 

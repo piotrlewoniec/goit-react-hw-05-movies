@@ -35,14 +35,6 @@ export const App = () => {
   );
 };
 
-// API themoviedb.org
-
-// /movies/get-movie-credits zapytanie o informację o zespole aktorskim dla strony filmu.
-// https://developers.themoviedb.org/3/movies/get-movie-credits
-
-// /movies/get-movie-reviews zapytanie o recenzje dla strony filmu.
-// https://developers.themoviedb.org/3/movies/get-movie-reviews
-
 // Code Splitting (rozdzielenie kodu)
 // Dodaj asynchroniczne ładownie kodu JS dla tras aplikacji, wykorzystując React.lazy() i <Suspense>.
 
