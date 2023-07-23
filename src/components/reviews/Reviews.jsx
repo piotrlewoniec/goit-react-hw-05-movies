@@ -8,11 +8,13 @@ import {
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
+import css from './Reviews.module.css';
+import PropTypes from 'prop-types';
 
 const ReviewsItem = ({ author, content }) => {
   return (
     <li>
-      <p>Author: {author}</p>
+      <p className={css.review_author}>Author: {author}</p>
       <p>{content}</p>
     </li>
   );
@@ -25,7 +27,9 @@ export const Reviews = () => {
   useEffect(() => {
     const getMovies = async () => {
       const response = await getDataFromServer(movieId);
-      setData([...response.data.results]);
+      if (response) {
+        setData([...response.data.results]);
+      }
     };
     getMovies();
   }, []);
@@ -56,27 +60,20 @@ async function getDataFromServer(movieId) {
   };
   try {
     const response = await axiosData(header, parameters);
-    // if (response.code !== 'ERR_NETWORK') {
-    //   this.setState({ isLoading: false });
-    //   setIsLoading(false);
-    //   totalHits = response.data.totalHits;
-    //   let filteredResponse = [];
-    //   if (response.data.hits.length !== 0) {
-    //     for (let element of response.data.hits) {
-    //       const { webformatURL, largeImageURL, tags, id } = element;
-    //       filteredResponse.push({ webformatURL, largeImageURL, tags, id });
-    //     }
-    //   }
-    //   return filteredResponse;
-    // } else {
-    return response;
-    // }
+    if (response.code === 'ERR_NETWORK') {
+      Notiflix.Notify.failure(`${response.message}`);
+    } else if (response.code === 'ERR_BAD_REQUEST') {
+      Notiflix.Notify.failure(`${response.response.data.status_message}`);
+    } else {
+      return response;
+    }
   } catch (error) {
-    //this.setState({ isLoading: false });
-    // setIsLoading(false);
     Notiflix.Notify.failure(`${error}`);
     return error;
   }
 }
 
-// https://api.themoviedb.org/3/movie/{movie_id}/reviews
+ReviewsItem.propTypes = {
+  author: PropTypes.string,
+  content: PropTypes.string,
+};

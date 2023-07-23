@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   headerDefaultGet,
   headerTrendingMovies,
@@ -8,13 +8,13 @@ import {
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
-import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import css from './Home.module.css';
 
 const HomeTrendingMoviesList = ({ title, id }) => {
   const location = useLocation();
   return (
-    <li>
+    <li className={css.movielinks}>
       <Link to={`movies/${id}`} state={{ from: location }}>
         {title}
       </Link>
@@ -27,7 +27,9 @@ export const Home = () => {
   useEffect(() => {
     const getMovies = async () => {
       const response = await getDataFromServer();
-      setData([...response.data.results]);
+      if (response) {
+        setData([...response.data.results]);
+      }
     };
     getMovies();
   }, []);
@@ -36,13 +38,17 @@ export const Home = () => {
     <main>
       <h1>Trending today</h1>
       <ul>
-        {data.map(element => (
-          <HomeTrendingMoviesList
-            key={element.id}
-            title={element.title}
-            id={element.id}
-          />
-        ))}
+        {data.length > 0 ? (
+          data.map(element => (
+            <HomeTrendingMoviesList
+              key={element.id}
+              title={element.title}
+              id={element.id}
+            />
+          ))
+        ) : (
+          <p>No data</p>
+        )}
       </ul>
     </main>
   );
@@ -57,24 +63,14 @@ async function getDataFromServer() {
   };
   try {
     const response = await axiosData(header, parameters);
-    // if (response.code !== 'ERR_NETWORK') {
-    //   this.setState({ isLoading: false });
-    //   setIsLoading(false);
-    //   totalHits = response.data.totalHits;
-    //   let filteredResponse = [];
-    //   if (response.data.hits.length !== 0) {
-    //     for (let element of response.data.hits) {
-    //       const { webformatURL, largeImageURL, tags, id } = element;
-    //       filteredResponse.push({ webformatURL, largeImageURL, tags, id });
-    //     }
-    //   }
-    //   return filteredResponse;
-    // } else {
-    return response;
-    // }
+    if (response.code === 'ERR_NETWORK') {
+      Notiflix.Notify.failure(`${response.message}`);
+    } else if (response.code === 'ERR_BAD_REQUEST') {
+      Notiflix.Notify.failure(`${response.response.data.status_message}`);
+    } else {
+      return response;
+    }
   } catch (error) {
-    //this.setState({ isLoading: false });
-    // setIsLoading(false);
     Notiflix.Notify.failure(`${error}`);
     return error;
   }

@@ -10,11 +10,12 @@ import {
 } from 'js/config/stdquery';
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
+import css from './Movies.module.css';
 
 const MoviesList = ({ title, id }) => {
   const location = useLocation();
   return (
-    <li>
+    <li className={css.movielinks}>
       <Link to={`${id}`} state={{ from: location }}>
         {title}
       </Link>
@@ -43,21 +44,33 @@ export const Movies = () => {
     event.preventDefault();
     const searchPchrase = event.target.form.searchinput.value;
     const response = await getDataFromServer(searchPchrase);
-    setSearchParams({ query: searchPchrase });
-    const query = searchParams.get('query');
-    setData([...response.data.results]);
+    if (response) {
+      setSearchParams({ query: searchPchrase });
+      setData([...response.data.results]);
+    }
   };
 
   return (
     <main>
-      <form name="searchform" autoComplete="off" method="POST" validate="false">
-        <input type="text" name="searchinput" />
+      <form
+        className={css.movieform}
+        name="searchform"
+        autoComplete="off"
+        method="POST"
+        validate="false"
+      >
+        <input className={css.movienameinput} type="text" name="searchinput" />
         <Button label="Search" formButton={true} action={handleSearch} />
       </form>
       <ul>
-        {data.map(element => (
-          <MoviesList key={element.id} title={element.title} id={element.id} />
-        ))}
+        {data.length > 0 &&
+          data.map(element => (
+            <MoviesList
+              key={element.id}
+              title={element.title}
+              id={element.id}
+            />
+          ))}
       </ul>
     </main>
   );
@@ -73,24 +86,14 @@ async function getDataFromServer(searchPchrase) {
   };
   try {
     const response = await axiosData(header, parameters);
-    // if (response.code !== 'ERR_NETWORK') {
-    //   this.setState({ isLoading: false });
-    //   setIsLoading(false);
-    //   totalHits = response.data.totalHits;
-    //   let filteredResponse = [];
-    //   if (response.data.hits.length !== 0) {
-    //     for (let element of response.data.hits) {
-    //       const { webformatURL, largeImageURL, tags, id } = element;
-    //       filteredResponse.push({ webformatURL, largeImageURL, tags, id });
-    //     }
-    //   }
-    //   return filteredResponse;
-    // } else {
-    return response;
-    // }
+    if (response.code === 'ERR_NETWORK') {
+      Notiflix.Notify.failure(`${response.message}`);
+    } else if (response.code === 'ERR_BAD_REQUEST') {
+      Notiflix.Notify.failure(`${response.response.data.status_message}`);
+    } else {
+      return response;
+    }
   } catch (error) {
-    //this.setState({ isLoading: false });
-    // setIsLoading(false);
     Notiflix.Notify.failure(`${error}`);
     return error;
   }

@@ -6,6 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'components/button/Button';
 import {
   headerDefaultGet,
@@ -15,6 +16,7 @@ import {
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
+import css from './MovieDetails.module.css';
 
 const MovieDeatailsInfo = ({ data }) => {
   const genres = data.genres.map(element => element.name).join(', ');
@@ -55,8 +57,10 @@ export const MovieDetails = () => {
   useEffect(() => {
     const getMovies = async () => {
       const response = await getDataFromServer(movieId);
-      setData(response.data);
-      setIsData(true);
+      if (response) {
+        setData(response.data);
+        setIsData(true);
+      }
     };
     getMovies();
   }, [movieId]);
@@ -107,31 +111,23 @@ export const MovieDetails = () => {
 
 async function getDataFromServer(movieId) {
   const header = { ...headerDefaultGet, ...headerSearchMovieDetails };
-
   header.url = `${movieId}`;
   const parameters = { ...paramsSearchMovieDetails, api_key: apikeyTMDB };
-
   try {
     const response = await axiosData(header, parameters);
-    // if (response.code !== 'ERR_NETWORK') {
-    //   this.setState({ isLoading: false });
-    //   setIsLoading(false);
-    //   totalHits = response.data.totalHits;
-    //   let filteredResponse = [];
-    //   if (response.data.hits.length !== 0) {
-    //     for (let element of response.data.hits) {
-    //       const { webformatURL, largeImageURL, tags, id } = element;
-    //       filteredResponse.push({ webformatURL, largeImageURL, tags, id });
-    //     }
-    //   }
-    //   return filteredResponse;
-    // } else {
-    return response;
-    // }
+    if (response.code === 'ERR_NETWORK') {
+      Notiflix.Notify.failure(`${response.message}`);
+    } else if (response.code === 'ERR_BAD_REQUEST') {
+      Notiflix.Notify.failure(`${response.response.data.status_message}`);
+    } else {
+      return response;
+    }
   } catch (error) {
-    //this.setState({ isLoading: false });
-    // setIsLoading(false);
     Notiflix.Notify.failure(`${error}`);
     return error;
   }
 }
+
+MovieDeatailsInfo.propTypes = {
+  data: PropTypes.object,
+};

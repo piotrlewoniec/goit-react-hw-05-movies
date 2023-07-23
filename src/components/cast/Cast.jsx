@@ -15,6 +15,7 @@ const CastItem = ({ profile_path, name, character }) => {
   return (
     <li>
       <img
+        className={css.cast_img}
         src={`https://image.tmdb.org/t/p/original${profile_path}`}
         alt={name}
       ></img>
@@ -27,26 +28,20 @@ const CastItem = ({ profile_path, name, character }) => {
 export const Cast = () => {
   const { movieId } = useParams();
   const [data, setData] = useState([]);
-  const [isData, setIsData] = useState(false);
 
   useEffect(() => {
-    setIsData(false);
     const getMovies = async () => {
       const response = await getDataFromServer(movieId);
-      setData([...response.data.cast]);
-      setIsData(true);
+      if (response) {
+        setData([...response.data.cast]);
+      }
     };
     getMovies();
   }, []);
 
-  // useEffect(() => {
-  //   setIsData(true);
-  //   data.map((element, index) => console.log(element));
-  // }, [data]);
-
   return (
     <ul>
-      {isData &&
+      {data.length > 0 ? (
         data.map((element, index) => (
           <CastItem
             key={`id-` + index}
@@ -54,12 +49,13 @@ export const Cast = () => {
             name={element.name}
             character={element.character}
           />
-        ))}
+        ))
+      ) : (
+        <p>No data.</p>
+      )}
     </ul>
   );
 };
-
-// https://api.themoviedb.org/3/movie/{movie_id}/credits
 
 async function getDataFromServer(movieId) {
   const header = { ...headerDefaultGet, ...headerSearchMovieCredits };
@@ -70,25 +66,21 @@ async function getDataFromServer(movieId) {
   };
   try {
     const response = await axiosData(header, parameters);
-    // if (response.code !== 'ERR_NETWORK') {
-    //   this.setState({ isLoading: false });
-    //   setIsLoading(false);
-    //   totalHits = response.data.totalHits;
-    //   let filteredResponse = [];
-    //   if (response.data.hits.length !== 0) {
-    //     for (let element of response.data.hits) {
-    //       const { webformatURL, largeImageURL, tags, id } = element;
-    //       filteredResponse.push({ webformatURL, largeImageURL, tags, id });
-    //     }
-    //   }
-    //   return filteredResponse;
-    // } else {
-    return response;
-    // }
+    if (response.code === 'ERR_NETWORK') {
+      Notiflix.Notify.failure(`${response.message}`);
+    } else if (response.code === 'ERR_BAD_REQUEST') {
+      Notiflix.Notify.failure(`${response.response.data.status_message}`);
+    } else {
+      return response;
+    }
   } catch (error) {
-    //this.setState({ isLoading: false });
-    // setIsLoading(false);
     Notiflix.Notify.failure(`${error}`);
     return error;
   }
 }
+
+CastItem.propTypes = {
+  profile_path: PropTypes.string,
+  name: PropTypes.string,
+  character: PropTypes.string,
+};
