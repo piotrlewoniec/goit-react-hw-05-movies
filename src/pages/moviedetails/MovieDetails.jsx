@@ -63,6 +63,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     locationStored = location;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
