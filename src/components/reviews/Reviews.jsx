@@ -20,7 +20,7 @@ const ReviewsItem = ({ author, content }) => {
   );
 };
 
-export const Reviews = () => {
+const Reviews = () => {
   const { movieId } = useParams();
   const [data, setData] = useState([]);
 
@@ -77,3 +77,5 @@ ReviewsItem.propTypes = {
   author: PropTypes.string,
   content: PropTypes.string,
 };
+
+export default Reviews;

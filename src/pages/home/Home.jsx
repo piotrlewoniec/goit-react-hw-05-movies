@@ -22,7 +22,7 @@ const HomeTrendingMoviesList = ({ title, id }) => {
   );
 };
 
-export const Home = () => {
+const Home = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     const getMovies = async () => {
@@ -80,3 +80,5 @@ HomeTrendingMoviesList.propTypes = {
   title: PropTypes.string,
   id: PropTypes.number,
 };
+
+export default Home;

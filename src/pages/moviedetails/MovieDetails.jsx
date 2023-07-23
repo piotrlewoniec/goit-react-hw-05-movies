@@ -5,6 +5,7 @@ import {
   useNavigate,
   useLocation,
 } from 'react-router-dom';
+import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'components/button/Button';
@@ -20,26 +21,30 @@ import css from './MovieDetails.module.css';
 
 const MovieDeatailsInfo = ({ data }) => {
   const genres = data.genres.map(element => element.name).join(', ');
+  const date = new Date(data.release_date).getFullYear();
   return (
-    <div>
+    <div className={css.moviewrapper}>
       <div>
         <img
+          className={css.movieposter}
           src={`https://image.tmdb.org/t/p/original${data.poster_path}`}
           alt={data.title}
         ></img>
       </div>
-      <ul>
-        <li>{data.title}</li>
-        <li>
-          <span>User Score: </span>
-          <span>{data.popularity}</span>
+      <ul className={css.moviedatawrapper}>
+        <li className={css.movietitle}>
+          {data.title} ({date})
         </li>
         <li>
-          <span>Overview</span>
+          <span className={css.moviedatalabel}>User Score: </span>
+          <span>{Math.trunc(data.vote_average * 10)}%</span>
+        </li>
+        <li className={css.movieoverview}>
+          <span className={css.moviedatalabel}>Overview</span>
           <span>{data.overview}</span>
         </li>
-        <li>
-          <span>Genres</span>
+        <li className={css.movieoverview}>
+          <span className={css.moviedatalabel}>Genres</span>
           <span>{genres}</span>
         </li>
       </ul>
@@ -47,12 +52,18 @@ const MovieDeatailsInfo = ({ data }) => {
   );
 };
 
-export const MovieDetails = () => {
+let locationStored;
+
+const MovieDetails = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState({});
   const [isData, setIsData] = useState(false);
+
+  useEffect(() => {
+    locationStored = location;
+  }, []);
 
   useEffect(() => {
     const getMovies = async () => {
@@ -91,20 +102,28 @@ export const MovieDetails = () => {
 
   return (
     <main>
-      <section>
+      <section className={css.moviedetalsec}>
         <Button label="Go back" action={handleGoBack} />
         {isData && <MovieDeatailsInfo data={data} />}
       </section>
-      <section>
+      <section className={css.addinfo}>
         Additional information
-        <Link to="cast" state={{ from: location }}>
-          Cast
-        </Link>
-        <Link to="reviews" state={{ from: location }}>
-          Reviews
-        </Link>
-        <Outlet />
+        <ul>
+          <li>
+            <Link to="cast" state={{ from: locationStored }}>
+              Cast
+            </Link>
+          </li>
+          <li>
+            <Link to="reviews" state={{ from: locationStored }}>
+              Reviews
+            </Link>
+          </li>
+        </ul>
       </section>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Outlet />
+      </Suspense>
     </main>
   );
 };
@@ -131,3 +150,5 @@ async function getDataFromServer(movieId) {
 MovieDeatailsInfo.propTypes = {
   data: PropTypes.object,
 };
+
+export default MovieDetails;

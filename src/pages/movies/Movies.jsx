@@ -23,7 +23,7 @@ const MoviesList = ({ title, id }) => {
   );
 };
 
-export const Movies = () => {
+const Movies = () => {
   const [data, setData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -103,3 +103,5 @@ MoviesList.propTypes = {
   title: PropTypes.string,
   id: PropTypes.number,
 };
+
+export default Movies;

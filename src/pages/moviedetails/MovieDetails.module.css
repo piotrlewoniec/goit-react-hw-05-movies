@@ -1,0 +1,43 @@
+.moviedetalsec {
+  padding-top: 10px;
+}
+
+.addinfo {
+  padding-top: 10px;
+  border-top: grey 1px solid;
+  border-bottom: grey 1px solid;
+}
+
+.moviewrapper {
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.movieposter {
+  display: block;
+  font-size: 0;
+  width: 400px;
+}
+
+.moviedatawrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  list-style: none;
+}
+
+.movietitle {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.movieoverview {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+.moviedatalabel {
+  font-weight: 700;
+}

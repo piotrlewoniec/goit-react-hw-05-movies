@@ -25,7 +25,7 @@ const CastItem = ({ profile_path, name, character }) => {
   );
 };
 
-export const Cast = () => {
+const Cast = () => {
   const { movieId } = useParams();
   const [data, setData] = useState([]);
 
@@ -84,3 +84,5 @@ CastItem.propTypes = {
   name: PropTypes.string,
   character: PropTypes.string,
 };
+
+export default Cast;
