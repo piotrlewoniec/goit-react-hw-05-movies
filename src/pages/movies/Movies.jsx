@@ -11,6 +11,7 @@ import {
 import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
 import css from './Movies.module.css';
+import { useLoad } from 'components/loadcontext/LoadContext';
 
 const MoviesList = ({ title, id }) => {
   const location = useLocation();
@@ -26,6 +27,7 @@ const MoviesList = ({ title, id }) => {
 const Movies = () => {
   const [data, setData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isLoadingOn, isLoadingOff } = useLoad();
 
   useEffect(() => {
     const query = searchParams.get('query');
@@ -33,8 +35,10 @@ const Movies = () => {
       return;
     } else {
       const getMovies = async () => {
+        isLoadingOn();
         const response = await getDataFromServer(query);
         setData([...response.data.results]);
+        isLoadingOff();
       };
       getMovies();
     }
@@ -44,11 +48,13 @@ const Movies = () => {
   const handleSearch = async event => {
     event.preventDefault();
     const searchPchrase = event.target.form.searchinput.value;
+    isLoadingOn();
     const response = await getDataFromServer(searchPchrase);
     if (response) {
       setSearchParams({ query: searchPchrase });
       setData([...response.data.results]);
     }
+    isLoadingOff();
   };
 
   return (

@@ -10,6 +10,7 @@ import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
 import css from './Cast.module.css';
 import PropTypes from 'prop-types';
+import { useLoad } from '../loadcontext/LoadContext';
 
 const CastItem = ({ profile_path, name, character }) => {
   return (
@@ -28,13 +29,16 @@ const CastItem = ({ profile_path, name, character }) => {
 const Cast = () => {
   const { movieId } = useParams();
   const [data, setData] = useState([]);
+  const { isLoadingOn, isLoadingOff } = useLoad();
 
   useEffect(() => {
     const getMovies = async () => {
+      isLoadingOn();
       const response = await getDataFromServer(movieId);
       if (response) {
         setData([...response.data.cast]);
       }
+      isLoadingOff();
     };
     getMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps

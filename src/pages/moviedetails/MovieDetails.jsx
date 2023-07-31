@@ -18,6 +18,7 @@ import { apikeyTMDB } from 'js/config/apikey';
 import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
 import css from './MovieDetails.module.css';
+import { useLoad } from 'components/loadcontext/LoadContext';
 
 const MovieDeatailsInfo = ({ data }) => {
   const genres = data.genres.map(element => element.name).join(', ');
@@ -60,6 +61,7 @@ const MovieDetails = () => {
   const location = useLocation();
   const [data, setData] = useState({});
   const [isData, setIsData] = useState(false);
+  const { isLoadingOn, isLoadingOff } = useLoad();
 
   useEffect(() => {
     locationStored = location;
@@ -68,16 +70,23 @@ const MovieDetails = () => {
 
   useEffect(() => {
     const getMovies = async () => {
+      isLoadingOn();
       const response = await getDataFromServer(movieId);
       if (response) {
         setData(response.data);
         setIsData(true);
       }
+      isLoadingOff();
     };
     getMovies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movieId]);
 
   const handleGoBack = () => {
+    if (location.state === null) {
+      navigate('/', { replace: false });
+      return;
+    }
     if (
       location.state.from.pathname === '/movies' &&
       location.state.from.search === ''

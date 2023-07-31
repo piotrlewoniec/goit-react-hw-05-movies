@@ -10,6 +10,7 @@ import { axiosData } from 'js/apireset/axios-data';
 import Notiflix from 'notiflix';
 import PropTypes from 'prop-types';
 import css from './Home.module.css';
+import { useLoad } from 'components/loadcontext/LoadContext';
 
 const HomeTrendingMoviesList = ({ title, id }) => {
   const location = useLocation();
@@ -24,14 +25,19 @@ const HomeTrendingMoviesList = ({ title, id }) => {
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const { isLoadingOn, isLoadingOff } = useLoad();
+
   useEffect(() => {
     const getMovies = async () => {
+      isLoadingOn();
       const response = await getDataFromServer();
       if (response) {
         setData([...response.data.results]);
       }
+      isLoadingOff();
     };
     getMovies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

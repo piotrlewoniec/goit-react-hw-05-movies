@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 
 import { lazy } from 'react';
 import { Navigation } from './navigation/Navigation';
+import { Loader } from './loader/Loader';
+import { useLoad } from './loadcontext/LoadContext';
 
 // import  Home  from 'pages/home/Home';
 // import Movies from 'pages/movies/Movies';
@@ -18,6 +20,8 @@ const Cast = lazy(() => import('./cast/Cast'));
 const Reviews = lazy(() => import('./reviews/Reviews'));
 
 export const App = () => {
+  const { isLoading } = useLoad();
+
   return (
     <div
       className={css.app}
@@ -41,12 +45,10 @@ export const App = () => {
           <Route path="*" element={<Home />} />
         </Route>
       </Routes>
+      {isLoading && <Loader name="RotatingLines" />}
     </div>
   );
 };
-
-// Code Splitting (rozdzielenie kodu)
-// Dodaj asynchroniczne ładownie kodu JS dla tras aplikacji, wykorzystując React.lazy() i <Suspense>.
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
